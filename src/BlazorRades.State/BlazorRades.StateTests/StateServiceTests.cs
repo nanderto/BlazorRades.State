@@ -19,9 +19,39 @@ namespace BlazorRades.State.Tests
             Assert.AreEqual(testMessage, result);
             Assert.IsInstanceOfType(result, typeof(TestMessage));
         }
+
+        [TestMethod]
+        public void AddMultipleTypesTest()
+        {
+            var sut = new StateService();
+            var testMessage = new TestMessage();
+            sut.Add<TestMessage>("1", testMessage);
+            var testMessage2 = new TestMessage2();
+            sut.Add<TestMessage2>("2", testMessage2);
+            var testMessage3 = new TestMessage2();
+            sut.Add<TestMessage2>("3", testMessage3);
+
+            var result = sut.Get<TestMessage>("1");
+            Assert.AreEqual(testMessage, result);
+            Assert.IsInstanceOfType(result, typeof(TestMessage));
+
+            var result2 = sut.Get<TestMessage>("1");
+            Assert.AreEqual(testMessage, result2);
+            Assert.IsInstanceOfType(result2, typeof(TestMessage));
+            Assert.AreEqual(result, result2);
+            Assert.IsTrue(result == result2);
+
+            result = null;
+
+            Assert.AreEqual(testMessage, result2);
+        }
     }
 
     internal class TestMessage
+    {
+    }
+
+    internal class TestMessage2
     {
     }
 }
