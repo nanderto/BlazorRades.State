@@ -5,13 +5,55 @@
 <p>Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-<br/><br />
-<Counter2></Counter2>
+<br />
+<br />
+
+
+<h1>Counter2</h1>
+
+<p>Current count: @currentCount2</p>
+<button class="btn btn-primary" @onclick="IncrementCount2">Click me2</button>
+<br />
+<br />
+
+
+<Counter2 StateService2="@StateService2"></Counter2>
+
 @code {
+    [Inject] IStateService StateService { get; set; }
+
+    IStateService StateService2 { get; set; }
+
     private int currentCount = 0;
+
+    private int currentCount2 = 0;
 
     private void IncrementCount()
     {
+        var result = StateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount = result.Current;
+        }
+
         currentCount++;
+        StateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount));
+    }
+
+    private void IncrementCount2()
+    {
+        var result = StateService2.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount2 = result.Current;
+        }
+
+        currentCount2++;
+        StateService2.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount2));
+    }
+
+    protected override void OnInitialized()
+    {
+        StateService2 = new StateService();
     }
 }

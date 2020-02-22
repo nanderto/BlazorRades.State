@@ -10,26 +10,26 @@ namespace BlazorRades.State.Tests
     public class StateServiceTests
     {
         [TestMethod]
-        public void AddTest()
+        public void AddOrUpdateTest()
         {
             var sut = new StateService();
             var testMessage = new TestMessage();
-            sut.Add<TestMessage>("1", testMessage);
+            sut.AddOrUpdate<TestMessage>("1", testMessage);
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);
             Assert.IsInstanceOfType(result, typeof(TestMessage));
         }
 
         [TestMethod]
-        public void AddMultipleTypesTest()
+        public void AddOrUpdateMultipleTypesTest()
         {
             var sut = new StateService();
             var testMessage = new TestMessage();
-            sut.Add<TestMessage>("1", testMessage);
+            sut.AddOrUpdate<TestMessage>("1", testMessage);
             var testMessage2 = new TestMessage2();
-            sut.Add<TestMessage2>("2", testMessage2);
+            sut.AddOrUpdate<TestMessage2>("2", testMessage2);
             var testMessage3 = new TestMessage2();
-            sut.Add<TestMessage2>("3", testMessage3);
+            sut.AddOrUpdate<TestMessage2>("3", testMessage3);
 
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);

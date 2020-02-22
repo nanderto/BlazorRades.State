@@ -4,11 +4,47 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+
+
+<p>Current count: @currentCount2</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount2">Click me</button>
+
+
 @code {
+    [Inject] IStateService StateService { get; set; }
+
+    [Parameter] public IStateService StateService2 { get; set; }
+
+
     private int currentCount = 0;
+    
+    private int currentCount2 = 0;
+
 
     private void IncrementCount()
     {
+        var result = StateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount = result.Current;
+        }
+
         currentCount++;
+        StateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount));
     }
+
+    private void IncrementCount2()
+    {
+        var result = StateService2.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount2 = result.Current;
+        }
+
+        currentCount2++;
+        StateService2.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount2));
+    }
+
+   
 }

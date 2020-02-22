@@ -29,6 +29,7 @@ namespace BlazorRades.State
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<IStateService, StateService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
