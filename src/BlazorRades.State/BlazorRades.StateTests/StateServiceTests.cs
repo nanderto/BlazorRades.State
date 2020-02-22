@@ -17,6 +17,7 @@ namespace BlazorRades.State.Tests
             sut.Add<TestMessage>("1", testMessage);
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);
+            Assert.IsInstanceOfType(result, typeof(TestMessage));
         }
     }
 
