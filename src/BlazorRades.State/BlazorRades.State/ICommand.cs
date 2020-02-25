@@ -9,26 +9,26 @@ namespace BlazorRades.State
     {
         Task<bool> ExecuteAsync();
 
-        Action Action { get; set; }
+        Func<bool> Action { get; set; }
     }
 
-    public class TestCommand : ICommand
+    public class CountCommand : ICommand
     {
-        public Action Action { get; set; }
+        public Func<bool> Action { get; set; }
 
         public async Task<bool> ExecuteAsync()
         {
-            return ((bool)await Action.DynamicInvoke());
+            return await Task.Run<bool>(Action);
         }
     }
 
-    public class ComandService : StateService
+    public class ComandService : StateService, IComandService
     {
         public async Task<bool> AddCommandAsync(ICommand command)
         {
             try
             {
-                command.Action.GetType();
+                //command.Action.GetType();
                 this.AddOrUpdate<ICommand>(command.GetType().FullName, command);
             }
             catch (Exception ex)
@@ -37,6 +37,20 @@ namespace BlazorRades.State
             }
 
             return true;
+        }
+
+        public async Task<bool> ExecuteCommandAsync(object command)
+        {
+            try
+            {
+                //command.Action.GetType();
+                var retrievedCommand = this.Get<ICommand>(command.GetType().FullName);
+                return await retrievedCommand.ExecuteAsync();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

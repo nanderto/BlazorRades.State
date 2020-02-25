@@ -1,0 +1,72 @@
+﻿<h3>Display</h3>
+
+<button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
+<br />
+<br />
+<p>Current count: @displayCount</p>
+<p>Current count: @DisplayCountBound</p>
+<br />
+<br />
+@code {
+    [Inject] IStateService StateService { get; set; }
+    
+    [Inject] IComandService CommandService { get; set; }
+
+    private string displayCountBound;
+
+    public string DisplayCountBound
+    {
+        get
+        {
+            return displayCountBound;
+        }
+        set
+        {
+            var result = StateService.Get<Count>(typeof(Count).FullName);
+            if (result != null)
+            {
+                displayCountBound = result.Current.ToString();
+            }
+
+            //displayCountBound = value;
+        }
+    }
+
+    private int displayCount = 0;
+
+    private void DisplayCount()
+    {
+        var result = StateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            displayCount = result.Current;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"In OnAfterRenderAsync of : {this.GetType().Name}, firstRender is: {firstRender}");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var command = new CountCommand();
+        command.Action = () =>
+        {
+            try
+            {
+                 Console.WriteLine($"In OnInitializedAsync of : {this.GetType().Name}");
+                StateHasChanged();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+
+            return true;
+        };
+
+        await CommandService.AddCommandAsync(command);
+    }
+}

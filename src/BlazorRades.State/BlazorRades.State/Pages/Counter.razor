@@ -4,29 +4,38 @@
 
 <p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCountByCommand">Click me</button>
 <br />
 <br />
 
+<Counter2 parameterCountStateService="@parameterCountStateService"></Counter2>
 
-<h1>Counter2</h1>
-
-<p>Current count: @currentCount2</p>
-<button class="btn btn-primary" @onclick="IncrementCount2">Click me2</button>
+<h1>Parameter Counter </h1>
+<p> newed up not injected</p>
+<button class="btn btn-primary" @onclick="ParameterIncrementCount">Click me2</button>
 <br />
+<p>Parameter count: @parameterCount</p>
 <br />
 
-
-<Counter2 StateService2="@StateService2"></Counter2>
+<Display></Display>
 
 @code {
     [Inject] IStateService StateService { get; set; }
 
-    IStateService StateService2 { get; set; }
+    [Inject] IComandService CommandService { get; set; }
+
+    IStateService parameterCountStateService { get; set; }
+
+    private ICommand command;
 
     private int currentCount = 0;
 
-    private int currentCount2 = 0;
+    private int parameterCount = 0;
+
+    private async Task IncrementCountByCommand()
+    {
+        await CommandService.ExecuteCommandAsync(command);
+    }
 
     private void IncrementCount()
     {
@@ -40,20 +49,42 @@
         StateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount));
     }
 
-    private void IncrementCount2()
+    private void ParameterIncrementCount()
     {
-        var result = StateService2.Get<Count>(typeof(Count).FullName);
+        var result = parameterCountStateService.Get<Count>(typeof(Count).FullName);
         if (result != null)
         {
-            currentCount2 = result.Current;
+            parameterCount = result.Current;
         }
 
-        currentCount2++;
-        StateService2.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount2));
+        parameterCount++;
+        parameterCountStateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(parameterCount));
     }
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        StateService2 = new StateService();
+        parameterCountStateService = new StateService();
+        //CommandService = new ComandService();
+        command = new CountCommand();
+        command.Action = () =>
+        {
+            try
+            {
+                IncrementCount();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        };
+
+        await CommandService.AddCommandAsync(command);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"In OnAfterRenderAsync of : {this.GetType().Name}, firstRender is: {firstRender}");
     }
 }

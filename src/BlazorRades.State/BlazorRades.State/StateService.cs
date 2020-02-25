@@ -8,6 +8,7 @@ namespace BlazorRades.State
     public class StateService : IStateService
     {
         private Dictionary<string, object> state = new Dictionary<string, object>();
+        
         public void AddOrUpdate<T>(string key, T value)
         {
             if (state.ContainsKey(key))
