@@ -14,7 +14,7 @@ namespace BlazorRades.State.Tests
         {
             var sut = new StateService();
             var testMessage = new TestMessage();
-            sut.AddOrUpdate<TestMessage>("1", testMessage);
+            sut.AddOrReplace<TestMessage>("1", testMessage);
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);
             Assert.IsInstanceOfType(result, typeof(TestMessage));
@@ -25,11 +25,11 @@ namespace BlazorRades.State.Tests
         {
             var sut = new StateService();
             var testMessage = new TestMessage();
-            sut.AddOrUpdate<TestMessage>("1", testMessage);
+            sut.AddOrReplace<TestMessage>("1", testMessage);
             var testMessage2 = new TestMessage2();
-            sut.AddOrUpdate<TestMessage2>("2", testMessage2);
+            sut.AddOrReplace<TestMessage2>("2", testMessage2);
             var testMessage3 = new TestMessage2();
-            sut.AddOrUpdate<TestMessage2>("3", testMessage3);
+            sut.AddOrReplace<TestMessage2>("3", testMessage3);
 
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);

@@ -1,16 +1,28 @@
-﻿<h3>Display</h3>
+﻿
+@if (WhichCount == "StateService")
+{
+    <button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
+    <p>Current count: @displayCount</p>
+    <p>Current bound count: @DisplayCountBound</p>
+}
+else if (WhichCount == "ParameterState")
+{
+    <button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
+    <p>Current count: @displayCount</p>
+    <p>Current bound count: @DisplayCountBound</p>
+}
 
-<button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
-<br />
-<br />
-<p>Current count: @displayCount</p>
-<p>Current count: @DisplayCountBound</p>
-<br />
-<br />
 @code {
     [Inject] IStateService StateService { get; set; }
-    
+
     [Inject] IComandService CommandService { get; set; }
+
+    [Parameter] public string WhichCount { get; set; }
+
+    [Parameter] public IStateService ParameterCountStateService { get; set; }
+
+
+    private int ParameterCurrentCount = 0;
 
     private string displayCountBound;
 
@@ -22,12 +34,23 @@
         }
         set
         {
-            var result = StateService.Get<Count>(typeof(Count).FullName);
-            if (result != null)
+            if (WhichCount == "StateService")
             {
-                displayCountBound = result.Current.ToString();
+                var result = StateService.Get<Count>(typeof(Count).FullName);
+                if (result != null)
+                {
+                    displayCountBound = result.Current.ToString();
+                }
             }
+            else
+            {
 
+                var result = ParameterCountStateService.Get<Count>(typeof(Count).FullName);
+                if (result != null)
+                {
+                    displayCountBound = result.Current.ToString();
+                }
+            }
             //displayCountBound = value;
         }
     }
@@ -36,10 +59,21 @@
 
     private void DisplayCount()
     {
-        var result = StateService.Get<Count>(typeof(Count).FullName);
-        if (result != null)
+        if (WhichCount == "StateService")
         {
-            displayCount = result.Current;
+            var result = StateService.Get<Count>(typeof(Count).FullName);
+            if (result != null)
+            {
+                displayCount = result.Current;
+            }
+        }
+        else
+        {
+            var result = ParameterCountStateService.Get<Count>(typeof(Count).FullName);
+            if (result != null)
+            {
+                displayCount = result.Current;
+            }
         }
     }
 
@@ -55,12 +89,12 @@
         {
             try
             {
-                 Console.WriteLine($"In OnInitializedAsync of : {this.GetType().Name}");
-                StateHasChanged();
-            }
-            catch(Exception ex)
+                Console.WriteLine($"In OnInitializedAsync of : {this.GetType().Name}");
+            //StateHasChanged();
+        }
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message + "WWWW");
                 return false;
             }
 

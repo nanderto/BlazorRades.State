@@ -1,24 +1,24 @@
-﻿<h3>Counter2</h3>
-
-<p>State Service Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
-
-
-<p>Parameter Current count: @ParameterCurrentCount</p>
-
-<button class="btn btn-primary" @onclick="parameterCount">Click me</button>
-
+﻿@if (WhichCount == "StateService")
+{
+    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <p>State Service Current count: @currentCount</p>
+}
+else if (WhichCount == "ParameterState")
+{
+    <button class="btn btn-primary" @onclick="parameterCount">Click me</button>
+    <p>Parameter Current count: @ParameterCurrentCount</p>
+}
 
 @code {
     [Inject] IStateService StateService { get; set; }
 
     [Parameter] public IStateService ParameterCountStateService { get; set; }
 
+    [Parameter] public string WhichCount { get; set; }
+
 
     private int currentCount = 0;
-    
+
     private int ParameterCurrentCount = 0;
 
 
@@ -31,7 +31,7 @@
         }
 
         currentCount++;
-        StateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount));
+        StateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(currentCount));
     }
 
     private void parameterCount()
@@ -43,7 +43,7 @@
         }
 
         ParameterCurrentCount++;
-        ParameterCountStateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(ParameterCurrentCount));
+        ParameterCountStateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(ParameterCurrentCount));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

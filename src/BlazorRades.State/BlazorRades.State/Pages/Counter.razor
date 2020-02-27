@@ -1,23 +1,45 @@
 ﻿@page "/counter"
 
-<h1>Counter</h1>
+<h1>Counters</h1>
 
-<p>Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCountByCommand">Click me</button>
 <br />
+<table style="width:100%;">
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="IncrementCountByCommand">Click me</button>&nbsp;
+            <p>Current count: @currentCount</p>
+        </td>
+        <td>
+            <Counter2 WhichCount="StateService" parameterCountStateService="@parameterCountStateService"></Counter2>&nbsp;</td>
+        <td>
+            <Display  WhichCount="StateService"></Display>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+
+        <td>
+            <button class="btn btn-primary" @onclick="ParameterIncrementCount">Click me2</button>
+            <p>Parameter count: @parameterCount</p>&nbsp;
+            &nbsp;
+        </td>
+        <td>
+            <Counter2 WhichCount="ParameterState" parameterCountStateService="@parameterCountStateService"></Counter2>
+            &nbsp;
+        </td>
+        <td><Display WhichCount="ParameterState" parameterCountStateService="@parameterCountStateService"></Display>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+           
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
 <br />
 
-<Counter2 parameterCountStateService="@parameterCountStateService"></Counter2>
-
-<h1>Parameter Counter </h1>
-<p> newed up not injected</p>
-<button class="btn btn-primary" @onclick="ParameterIncrementCount">Click me2</button>
-<br />
-<p>Parameter count: @parameterCount</p>
-<br />
-
-<Display></Display>
 
 @code {
     [Inject] IStateService StateService { get; set; }
@@ -46,7 +68,7 @@
         }
 
         currentCount++;
-        StateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(currentCount));
+        StateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(currentCount));
     }
 
     private void ParameterIncrementCount()
@@ -58,7 +80,7 @@
         }
 
         parameterCount++;
-        parameterCountStateService.AddOrUpdate<Count>(typeof(Count).FullName, new Count(parameterCount));
+        parameterCountStateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(parameterCount));
     }
 
     protected async override Task OnInitializedAsync()
@@ -72,8 +94,9 @@
             {
                 IncrementCount();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message + "XXXX");
                 return false;
             }
 

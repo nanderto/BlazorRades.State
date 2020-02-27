@@ -29,10 +29,11 @@ namespace BlazorRades.State
             try
             {
                 //command.Action.GetType();
-                this.AddOrUpdate<ICommand>(command.GetType().FullName, command);
+                this.AddOrReplace<ICommand>(command.GetType().FullName, command);
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message + "YYYY");
                 return false;
             }
 
@@ -49,6 +50,7 @@ namespace BlazorRades.State
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message + "ZZZZ");
                 return false;
             }
         }
