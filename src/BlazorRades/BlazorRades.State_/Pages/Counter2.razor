@@ -1,0 +1,53 @@
+﻿@if (WhichCount == "StateService")
+{
+    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <p>State Service Current count: @currentCount</p>
+}
+else if (WhichCount == "ParameterState")
+{
+    <button class="btn btn-primary" @onclick="parameterCount">Click me</button>
+    <p>Parameter Current count: @ParameterCurrentCount</p>
+}
+
+@code {
+    [Inject] IStateService StateService { get; set; }
+
+    [Parameter] public IStateService ParameterCountStateService { get; set; }
+
+    [Parameter] public string WhichCount { get; set; }
+
+
+    private int currentCount = 0;
+
+    private int ParameterCurrentCount = 0;
+
+
+    private void IncrementCount()
+    {
+        var result = StateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount = result.Current;
+        }
+
+        currentCount++;
+        StateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(currentCount));
+    }
+
+    private void parameterCount()
+    {
+        var result = ParameterCountStateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            ParameterCurrentCount = result.Current;
+        }
+
+        ParameterCurrentCount++;
+        ParameterCountStateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(ParameterCurrentCount));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"In OnAfterRenderAsync of : {this.GetType().Name}, firstRender is: {firstRender}");
+    }
+}

@@ -1,0 +1,106 @@
+﻿
+@if (WhichCount == "StateService")
+{
+    <button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
+    <p>Current count: @displayCount</p>
+    <p>Current bound count: @DisplayCountBound</p>
+}
+else if (WhichCount == "ParameterState")
+{
+    <button class="btn btn-primary" @onclick="DisplayCount">Click me</button>
+    <p>Current count: @displayCount</p>
+    <p>Current bound count: @DisplayCountBound</p>
+}
+
+@code {
+    [Inject] IStateService StateService { get; set; }
+
+    [Inject] IComandService CommandService { get; set; }
+
+    [Parameter] public string WhichCount { get; set; }
+
+    [Parameter] public IStateService ParameterCountStateService { get; set; }
+
+
+    private int ParameterCurrentCount = 0;
+
+    private string displayCountBound;
+
+    public string DisplayCountBound
+    {
+        get
+        {
+            return displayCountBound;
+        }
+        set
+        {
+            if (WhichCount == "StateService")
+            {
+                var result = StateService.Get<Count>(typeof(Count).FullName);
+                if (result != null)
+                {
+                    displayCountBound = result.Current.ToString();
+                }
+            }
+            else
+            {
+
+                var result = ParameterCountStateService.Get<Count>(typeof(Count).FullName);
+                if (result != null)
+                {
+                    displayCountBound = result.Current.ToString();
+                }
+            }
+            //displayCountBound = value;
+        }
+    }
+
+    private int displayCount = 0;
+
+    private void DisplayCount()
+    {
+        if (WhichCount == "StateService")
+        {
+            var result = StateService.Get<Count>(typeof(Count).FullName);
+            if (result != null)
+            {
+                displayCount = result.Current;
+            }
+        }
+        else
+        {
+            var result = ParameterCountStateService.Get<Count>(typeof(Count).FullName);
+            if (result != null)
+            {
+                displayCount = result.Current;
+            }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"In OnAfterRenderAsync of : {this.GetType().Name}, firstRender is: {firstRender}");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var command = new CountCommand();
+        command.Action = () =>
+        {
+            try
+            {
+                Console.WriteLine($"In Display actiom of : {this.GetType().Name}");
+                //StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "WWWW");
+                return false;
+            }
+
+            return true;
+        };
+
+        await CommandService.AddCommandAsync(command);
+    }
+}

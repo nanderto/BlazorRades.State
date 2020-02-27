@@ -1,0 +1,113 @@
+﻿@page "/counter"
+
+<h1>Counters</h1>
+
+<br />
+<table style="width:100%;">
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="IncrementCountByCommand">Click me</button>&nbsp;
+            <p>Current count: @currentCount</p>
+        </td>
+        <td>
+            <Counter2 WhichCount="StateService" parameterCountStateService="@parameterCountStateService"></Counter2>&nbsp;</td>
+        <td>
+            <Display  WhichCount="StateService"></Display>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+
+        <td>
+            <button class="btn btn-primary" @onclick="ParameterIncrementCount">Click me2</button>
+            <p>Parameter count: @parameterCount</p>&nbsp;
+            &nbsp;
+        </td>
+        <td>
+            <Counter2 WhichCount="ParameterState" parameterCountStateService="@parameterCountStateService"></Counter2>
+            &nbsp;
+        </td>
+        <td><Display WhichCount="ParameterState" parameterCountStateService="@parameterCountStateService"></Display>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+           
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+<br />
+
+
+@code {
+    [Inject] IStateService StateService { get; set; }
+
+    [Inject] IComandService CommandService { get; set; }
+
+    IStateService parameterCountStateService { get; set; }
+
+    private ICommand command;
+
+    private int currentCount = 0;
+
+    private int parameterCount = 0;
+
+    private async Task IncrementCountByCommand()
+    {
+        await CommandService.ExecuteAllCommandAsync(command);
+    }
+
+    private void IncrementCount()
+    {
+        var result = StateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            currentCount = result.Current;
+        }
+
+        currentCount++;
+        StateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(currentCount));
+    }
+
+    private void ParameterIncrementCount()
+    {
+        var result = parameterCountStateService.Get<Count>(typeof(Count).FullName);
+        if (result != null)
+        {
+            parameterCount = result.Current;
+        }
+
+        parameterCount++;
+        parameterCountStateService.AddOrReplace<Count>(typeof(Count).FullName, new Count(parameterCount));
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        parameterCountStateService = new StateService();
+        //CommandService = new ComandService();
+        command = new CountCommand();
+        command.Action = () =>
+        {
+            try
+            {
+                IncrementCount();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "XXXX");
+                return false;
+            }
+
+            return true;
+        };
+
+        await CommandService.AddCommandAsync(command);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"In OnAfterRenderAsync of : {this.GetType().Name}, firstRender is: {firstRender}");
+    }
+}

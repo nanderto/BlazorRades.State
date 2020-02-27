@@ -71,6 +71,8 @@ namespace BlazorRades.State.Tests
 
             Assert.AreEqual(testMessage, result2[0]);
         }
+
+
     }
 
     internal class TestMessage
