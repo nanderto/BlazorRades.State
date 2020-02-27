@@ -5,6 +5,6 @@ namespace BlazorRades.State
     public interface IComandService
     {
         Task<bool> AddCommandAsync(ICommand command);
-        Task<bool> ExecuteCommandAsync(object command);
+        Task<bool> ExecuteAllCommandAsync(object command);
     }
 }

@@ -29,7 +29,7 @@ namespace BlazorRades.State
             try
             {
                 //command.Action.GetType();
-                this.AddOrReplace<ICommand>(command.GetType().FullName, command);
+                this.Add<ICommand>(command.GetType().FullName, command);
             }
             catch (Exception ex)
             {
@@ -40,13 +40,18 @@ namespace BlazorRades.State
             return true;
         }
 
-        public async Task<bool> ExecuteCommandAsync(object command)
+        public async Task<bool> ExecuteAllCommandAsync(object command)
         {
             try
             {
-                //command.Action.GetType();
-                var retrievedCommand = this.Get<ICommand>(command.GetType().FullName);
-                return await retrievedCommand.ExecuteAsync();
+                bool result = false;
+                var retrievedCommand = this.GetAll<ICommand>(command.GetType().FullName);
+                foreach (var item in retrievedCommand)
+                {
+                    result = await item.ExecuteAsync();
+                }
+
+                return result;
             }
             catch (Exception ex)
             {

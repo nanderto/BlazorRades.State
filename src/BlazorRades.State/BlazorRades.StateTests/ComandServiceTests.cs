@@ -29,7 +29,7 @@ namespace BlazorRades.State.Tests
             testCommand.Action = () => { return true; };
             var result = await sut.AddCommandAsync(testCommand);
 
-            var exectedResult = await sut.ExecuteCommandAsync(testCommand);
+            var exectedResult = await sut.ExecuteAllCommandAsync(testCommand);
 
             Assert.IsTrue(exectedResult);
         }

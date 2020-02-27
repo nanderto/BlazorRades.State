@@ -56,7 +56,7 @@
 
     private async Task IncrementCountByCommand()
     {
-        await CommandService.ExecuteCommandAsync(command);
+        await CommandService.ExecuteAllCommandAsync(command);
     }
 
     private void IncrementCount()
