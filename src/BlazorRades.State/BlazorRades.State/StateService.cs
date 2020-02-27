@@ -21,19 +21,19 @@ namespace BlazorRades.State
             }
         }
 
-        public void AddToCollection<T>(string key, T value)
+        public void Add<T>(string key, T value)
         {
             if (state.ContainsKey(key))
             {
-                List<T> list = (List<T>) state[key];
+                var list = (List<T>) state[key];
                 list.Add(value);
                 state[key] = list;
             }
             else
             {
-                List<T> list = new List<T>();
+                var list = new List<T>();
                 list.Add(value);
-                state.Add(key, list);
+                state[key] = list;
             }
         }
 
