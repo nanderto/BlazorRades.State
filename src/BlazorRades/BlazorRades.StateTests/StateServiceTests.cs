@@ -10,14 +10,48 @@ namespace BlazorRades.State.Tests
     public class StateServiceTests
     {
         [TestMethod]
-        public void AddOrUpdateTest()
+        public void AddOrReplaceTest()
         {
             var sut = new StateService();
-            var testMessage = new TestMessage();
+            var testMessage = new TestMessage { TestProperty = 1 };
             sut.AddOrReplace<TestMessage>("1", testMessage);
             var result = sut.Get<TestMessage>("1");
             Assert.AreEqual(testMessage, result);
             Assert.IsInstanceOfType(result, typeof(TestMessage));
+
+            var testMessage2 = new TestMessage { TestProperty = 2 };
+            sut.AddOrReplace<TestMessage>("1", testMessage2);
+            result = sut.Get<TestMessage>("1");
+            Assert.AreEqual(testMessage2, result);
+            Assert.IsInstanceOfType(result, typeof(TestMessage));
+        }
+
+        [TestMethod]
+        public void GetTest()
+        {
+            var sut = new StateService();
+            var testMessage = new TestMessage { TestProperty = 1 };
+            sut.AddOrReplace<TestMessage>("1", testMessage);
+            var result = sut.Get<TestMessage>("2");
+            Assert.AreEqual(null, result);
+        }
+
+        [TestMethod]
+        public void GetCountTest()
+        {
+            var sut = new StateService();
+            var testMessage = new TestMessage();
+            sut.Add<TestMessage>("1", testMessage);
+            var testMessage2 = new TestMessage();
+            sut.Add<TestMessage>("1", testMessage2);
+            var testMessage3 = new TestMessage2();
+            sut.Add<TestMessage2>("3", testMessage3);
+            var result = sut.GetCount<TestMessage>("1");
+            Assert.AreEqual(2, result);
+            result = sut.GetCount<TestMessage2>("3");
+            Assert.AreEqual(1, result);
+            result = sut.GetCount<TestMessage2>("2");
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -55,7 +89,7 @@ namespace BlazorRades.State.Tests
             var testMessage2 = new TestMessage();
             sut.Add<TestMessage>("1", testMessage2);
             var testMessage3 = new TestMessage2();
-            sut.AddOrReplace<TestMessage2>("3", testMessage3);
+            sut.Add<TestMessage2>("3", testMessage3);
 
             var result = sut.GetAll<TestMessage>("1");
             Assert.AreEqual(testMessage, result[0]);
@@ -77,9 +111,11 @@ namespace BlazorRades.State.Tests
 
     internal class TestMessage
     {
+        public int TestProperty { get; set; }
     }
 
     internal class TestMessage2
     {
+        public int TestProperty { get; set; }
     }
 }

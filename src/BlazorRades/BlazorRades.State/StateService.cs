@@ -67,7 +67,7 @@ namespace BlazorRades.State
                 return ((List<T>)value).Count;
             }
 
-            return ((List<T>)value).Count;
+            return 0;
         }
     }
 }

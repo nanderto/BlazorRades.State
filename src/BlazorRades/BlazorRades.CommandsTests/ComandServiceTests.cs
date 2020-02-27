@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorRades.State.Tests
 {
@@ -13,25 +14,33 @@ namespace BlazorRades.State.Tests
         [TestMethod]
         public async Task AddCommandAsyncTest()
         {
-            var sut = new ComandService();
-            var testCommand = new CountCommand();
-            testCommand.Action = () => { return true; };
-            var result = await sut.AddCommandAsync(testCommand);
+            using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
+            {
+                var logger = loggerFactory.CreateLogger<ComandServiceTests>();
+                var sut = new ComandService(logger);
+                var testCommand = new CountCommand();
+                testCommand.Action = () => { return true; };
+                var result = await sut.AddCommandAsync(testCommand);
 
-            Assert.IsTrue(result);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
         public async Task ExecuteCommandAsyncTest()
         {
-            var sut = new ComandService();
-            var testCommand = new CountCommand();
-            testCommand.Action = () => { return true; };
-            var result = await sut.AddCommandAsync(testCommand);
+            using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
+            {
+                var logger = loggerFactory.CreateLogger<ComandServiceTests>();
+                var sut = new ComandService(logger);
+                var testCommand = new CountCommand();
+                testCommand.Action = () => { return true; };
+                var result = await sut.AddCommandAsync(testCommand);
 
-            var exectedResult = await sut.ExecuteAllCommandAsync(testCommand);
+                var exectedResult = await sut.ExecuteAllCommandAsync(testCommand);
 
-            Assert.IsTrue(exectedResult);
+                Assert.IsTrue(exectedResult);
+            }
         }
     }
 
