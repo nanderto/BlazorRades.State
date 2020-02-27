@@ -21,6 +21,22 @@ namespace BlazorRades.State
             }
         }
 
+        public void AddToCollection<T>(string key, T value)
+        {
+            if (state.ContainsKey(key))
+            {
+                List<T> list = (List<T>) state[key];
+                list.Add(value);
+                state[key] = list;
+            }
+            else
+            {
+                List<T> list = new List<T>();
+                list.Add(value);
+                state.Add(key, list);
+            }
+        }
+
         public T Get<T>(string key)
         {
             object value;
@@ -30,6 +46,28 @@ namespace BlazorRades.State
             }
 
             return (T)value;
+        }
+
+        public List<T> GetAll<T>(string key)
+        {
+            object value;
+            if (state.TryGetValue(key, out value))
+            {
+                return (List<T>)value;
+            }
+
+            return (List<T>)value;
+        }
+
+        public int GetCount<T>(string key)
+        {
+            object value;
+            if (state.TryGetValue(key, out value))
+            {
+                return ((List<T>)value).Count;
+            }
+
+            return ((List<T>)value).Count;
         }
     }
 
